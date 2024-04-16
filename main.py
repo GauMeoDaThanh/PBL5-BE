@@ -1,17 +1,28 @@
-from flask import Flask, request, jsonify
-import subprocess
-import os
-import json
-import torch
-from PIL import Image
-import torchvision.transforms as transforms
+import requests
 
+import detect
+from flask import Flask, jsonify, request
+
+# detect.detect("image.jpg")
 app = Flask(__name__)
 
-@app.route('/predict', methods=['POST'])
-def detect():
-    image = request.files['image']
-    image_path = 'temp.jpg'
-    image.save(image_path)
 
-    image = Image.open(image_path)
+@app.route('/')
+def index():
+    return "hello world"
+
+
+@app.route("/detect")
+def detect_image():
+    if request.method == "POST":
+        image = request.files.get('image')
+
+        if not image:
+            return jsonify({"error": "No image provided"}), 400
+        image.save(f'img/{image.filename}')
+    elif request.method == "GET":
+        return "detect page"
+
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', debug=True)
