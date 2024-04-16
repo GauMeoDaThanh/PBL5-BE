@@ -17,11 +17,15 @@ def detect(image_path):
 
     results = model(converted, size=640)
     labels = results.names
+    fruit_labels_detected = {}
     for *box, conf, cls in results.xyxy[0]:
         label = f"{labels[int(cls)]}: {conf:.2f}"
-        print(label)
         cv2.rectangle(image, (int(box[0]), int(box[1])), (int(box[2]), int(box[3])), (255, 0, 0), 2)
         cv2.putText(image, label, (int(box[0]), int(box[1] - 10)), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (0, 0, 255), 2)
+        # Count the number of fruit detected
+        fruit_labels_detected[labels[int(cls)]] = fruit_labels_detected.get(labels[int(cls)], 0) + 1
 
     cv2.imwrite(f'img/{image_path}_detected.jpg', image)
     pathlib.PosixPath = temp
+    return fruit_labels_detected
+
