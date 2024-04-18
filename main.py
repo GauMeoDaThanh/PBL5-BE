@@ -1,16 +1,11 @@
+import base64
 import requests
-
-import detect
-from flask import Flask, jsonify, request
+from detect import Detect
+from flask import Flask, jsonify, request, send_file
 from flask_cors import CORS
 
-# detect.detect("image.jpg")
 app = Flask(__name__)
 CORS(app)
-
-@app.route('/')
-def index():
-    return "hello world"
 
 
 @app.route("/detect", methods=["POST"])
@@ -18,17 +13,15 @@ def detect_image():
     files = request.files
     file = files.get('file')
     file.save(f"img/{file.filename}")
-    # if request.method == "POST":
-    #     image = request.files.get('image')
-    #
-    #     if not image:
-    #         return jsonify({"error": "No image provided"}), 400
-    #     image.save(f'img/{image.filename}')
-    # elif request.method == "GET":
-    #     return "detect page"
-    fruit_detected = detect.detect(file.filename)
+    fruit_detected = detect_model.detect_image(file.filename)
+    image_path = f'img/{file.filename}_detected.jpg'
+    with open(image_path, 'rb') as f:
+        img_data = base64.b64encode(f.read()).decode('utf-8')
+    fruit_detected['image'] = img_data
+
     return jsonify(fruit_detected)
 
 
 if __name__ == '__main__':
+    detect_model = Detect()
     app.run(host='0.0.0.0', debug=True)
