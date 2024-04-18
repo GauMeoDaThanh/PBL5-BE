@@ -6,11 +6,11 @@ from PIL import Image
 
 class Detect:
     def __init__(self):
-        temp = pathlib.PosixPath
-        pathlib.PosixPath = pathlib.WindowsPath
+        # temp = pathlib.PosixPath
+        # pathlib.PosixPath = pathlib.WindowsPath
         torch.hub._validate_not_a_forked_repo = lambda a, b, c: True
         self.model = torch.hub.load('ultralytics/yolov5', 'custom', path='model/best.pt', force_reload=True)
-        pathlib.PosixPath = temp
+        # pathlib.PosixPath = temp
 
     def detect_image(self, image_path):
         image = cv2.imread("img/" + image_path)
