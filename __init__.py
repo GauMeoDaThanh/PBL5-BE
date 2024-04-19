@@ -3,6 +3,7 @@ import requests
 from detect import Detect
 from flask import Flask, jsonify, request, send_file
 from flask_cors import CORS
+import gevent
 
 
 def create_app():
