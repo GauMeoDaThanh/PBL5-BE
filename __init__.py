@@ -4,7 +4,7 @@ from detect import Detect
 from flask import Flask, jsonify, request, send_file
 from flask_cors import CORS
 import gevent
-
+import uvicorn
 
 def create_app():
     app = Flask(__name__)
