@@ -2,6 +2,7 @@ import pathlib
 import cv2
 import torch
 from PIL import Image
+import pandas as pd
 
 
 class Detect:
