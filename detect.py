@@ -3,6 +3,7 @@ import cv2
 import torch
 from PIL import Image
 import pandas as pd
+import gunicorn
 
 
 class Detect:
