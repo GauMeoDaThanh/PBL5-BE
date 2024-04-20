@@ -2,20 +2,21 @@ import pathlib
 import cv2
 import torch
 from PIL import Image
-import pandas as pd
-import gunicorn
+import base64
+import numpy as np
+from io import BytesIO
 
 
 class Detect:
     def __init__(self):
-        # temp = pathlib.PosixPath
-        # pathlib.PosixPath = pathlib.WindowsPath
+        temp = pathlib.PosixPath
+        pathlib.PosixPath = pathlib.WindowsPath
         torch.hub._validate_not_a_forked_repo = lambda a, b, c: True
         self.model = torch.hub.load('ultralytics/yolov5', 'custom', path='model/best.pt', force_reload=True)
-        # pathlib.PosixPath = temp
+        pathlib.PosixPath = temp
 
-    def detect_image(self, image_path):
-        image = cv2.imread("img/" + image_path)
+    def detect_image(self, image):
+        image = cv2.imdecode(np.frombuffer(image.read(), np.uint8), cv2.IMREAD_COLOR)
         converted = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
         converted = Image.fromarray(converted)
 
@@ -30,5 +31,11 @@ class Detect:
             fruit_labels_detected["fruits"][labels[int(cls)]] = fruit_labels_detected["fruits"].get(labels[int(cls)],
                                                                                                     0) + 1
 
-        cv2.imwrite(f'img/{image_path}_detected.jpg', image)
+        image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+        pil_img = Image.fromarray(image)
+        byte_arr = BytesIO()
+        pil_img.save(byte_arr, format='JPEG')
+        encoded_image = base64.b64encode(byte_arr.getvalue()).decode('utf-8')
+
+        fruit_labels_detected["image"] = encoded_image
         return fruit_labels_detected
