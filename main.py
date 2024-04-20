@@ -7,17 +7,10 @@ from flask_cors import CORS
 app = Flask(__name__)
 CORS(app)
 
-
 @app.route("/detect", methods=["POST"])
 def detect_image():
-    files = request.files
-    file = files.get('file')
-    file.save(f"img/{file.filename}")
-    fruit_detected = detect_model.detect_image(file.filename)
-    image_path = f'img/{file.filename}_detected.jpg'
-    with open(image_path, 'rb') as f:
-        img_data = base64.b64encode(f.read()).decode('utf-8')
-    fruit_detected['image'] = img_data
+    file = request.files['image']
+    fruit_detected = detect_model.detect_image(file)
 
     return jsonify(fruit_detected)
 
